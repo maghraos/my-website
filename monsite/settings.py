@@ -23,9 +23,9 @@ PROJECT_DIR = os.path.join(BASE_DIR,"monsite")
 SECRET_KEY = 'c41^sd32$lg+qoak_bm^65hp=7i5t3#9k_0$+7v0*gc+y$rm+('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
