@@ -3,3 +3,12 @@ os: linux
 files:
   - source: /
     destination: /opt/monsite
+hooks:
+  BeforeInstall:
+    - location: ./stop.sh
+  AfterInstall:
+    - location: ./change_permissions.sh
+      timeout: 180
+  ApplicationStart:
+    - location: ./run.sh
+      timeout: 3600
