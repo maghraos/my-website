@@ -6,9 +6,9 @@ files:
 hooks:
   BeforeInstall:
     - location: ./change_permissions.sh
-  AfterInstall:
-    - location: ./stop.sh 
-      timeout: 180
   ApplicationStart:
     - location: ./run.sh
       timeout: 3600
+  ApplicationStop:
+    - location: ./stop.sh
+      timeout: 6000
