@@ -1,2 +1,2 @@
-sudo chmod +x run.sh
-sudo chmod +x stop.sh
+sudo chmod 755 run.sh
+sudo chmod 755 stop.sh
