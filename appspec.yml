@@ -15,4 +15,4 @@ hooks:
   ApplicationStart:
     - location: ./run.sh
       timeout: 10
-      runas: ubuntu
+      runas: root
