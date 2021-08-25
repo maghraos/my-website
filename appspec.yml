@@ -12,6 +12,9 @@ hooks:
   AfterInstall:
     - location: ./change_permissions.sh
       runas: root
+    - location: ./run.sh
+      timeout: 20
+      runas: ubuntu
   ApplicationStart:
     - location: ./run.sh
       timeout: 20
