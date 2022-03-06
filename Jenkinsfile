@@ -1,4 +1,4 @@
-pipeline {
+Pipeline {
     stages {
         stage('Build Stage') {
             steps {
