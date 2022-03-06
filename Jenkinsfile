@@ -8,6 +8,7 @@ pipeline {
                 sh '''
                 echo "Affichage contenu du projet"
                 ls 
+                pwd
                 '''
             }
         }
