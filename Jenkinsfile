@@ -3,8 +3,11 @@ pipeline {
     stages {
         stage('Build Stage') {
             steps {
+                git branch: 'master',
+                url: 'https://github.com/maghraos/my-website.git'
                 sh '''
-                echo "AM OKEY"
+                echo "Affichage contenu du projet"
+                ls 
                 '''
             }
         }
