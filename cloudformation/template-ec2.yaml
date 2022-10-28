@@ -1,0 +1,87 @@
+---
+Parameters:
+  SSHKEY:
+    Type: String
+    Default: KP_1
+Resources:
+  InstanceDj:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: eu-west-3a
+      ImageId: ami-00373688fb7818d45
+      InstanceType: t2.micro
+      KeyName: !Ref SSHKEY
+      SecurityGroups:
+        - !Ref SSHSG
+      IamInstanceProfile:
+        - ! Ref RootInstanceProfile
+      UserData:
+        !Base64 |
+        #!/bin/bash
+
+        sudo apt-get update -y
+        sudo apt-get upgrade -y
+        sudo apt-get install python3-venv -y
+        sudo apt-get install python3-pip -y
+        sudo apt-get install nginx -y
+        sudo apt-get install wget -y
+        pip3 install --upgrade pip
+        pip3 install django
+        pip3 install gunicorn
+        #python3 -m venv env
+        #source env/bin/activate
+
+
+        ##Install codedeploy agent with deb packages due to compatibilities issues with ubuntu 20
+        sudo apt-get install ruby -y
+        wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/releases/codedeploy-agent_1.0-1.1597_all.deb
+        mkdir codedeploy-agent_1.0-1.1597_ubuntu20
+        dpkg-deb -R codedeploy-agent_1.0-1.1597_all.deb codedeploy-agent_1.0-1.1597_ubuntu20
+        sed 's/2.0/2.7/' -i ./codedeploy-agent_1.0-1.1597_ubuntu20/DEBIAN/control
+        dpkg-deb -b codedeploy-agent_1.0-1.1597_ubuntu20
+        sudo dpkg -i codedeploy-agent_1.0-1.1597_ubuntu20.deb
+        sudo systemctl start codedeploy-agent
+        sudo systemctl enable codedeploy-agent
+
+  INTEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref InstanceDj
+
+  SSHSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH
+      SecurityGroupIngress:
+        CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  RootRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 's3:Get*'
+                Resource: '*'
+  RootInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref RootRole

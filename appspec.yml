@@ -2,4 +2,17 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/my-website
+    destination: /opt/monsite
+hooks:
+  BeforeInstall:
+    - location: ./clean.sh
+    - location: ./stop.sh
+      timeout: 6000
+      runas: root
+  AfterInstall:
+    - location: ./change_permissions.sh
+      runas: root
+  ApplicationStart:
+    - location: ./run.sh
+      timeout: 20
+      runas: ubuntu
